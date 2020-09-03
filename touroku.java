@@ -1,4 +1,6 @@
-<<<<<<< HEAD
+﻿<<<<<<< HEAD
+
+へんしゅうしたよ
 package com.example.demo;
 
 import java.io.UnsupportedEncodingException;

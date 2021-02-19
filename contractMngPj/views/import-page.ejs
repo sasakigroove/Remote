@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <title>Excel取り込み</title>
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+    </head>
+    <style>
+	    .center{
+	    	text-align: center;
+	    }
+
+        .red{
+            color:red;
+        }
+
+    </style>
+    <script type="text/javascript">
+        //画面が開かれるたび呼び出される
+        function popUp(){
+
+        //ポップアップエラーの表示判定
+            if(document.getElementById("popUpErrorid").value != ""){
+                alert(document.getElementById("popUpErrorid").value);
+            }  
+        }
+            </script>
+
+
+    <body onload = "popUp()">
+        <form action = "/import/proccess" method = "post">
+            <p class="center"><h1 class="center">Excel取り込み</h1></p>
+            <p></p>
+<!--注意事項欄-->
+            <p>取り込むファイルのパスを入力してください</p>
+
+<!--テキストエリア-->
+            <p><input type="file" name="path" value="<%= hsh.get('path') %>" size="70%" ></p>
+            <!-- <p><input type = "text" name="path" value="<%= hsh.get('path') %>" size = "250%"></p> -->
+            <br>
+            <p>取り込む年月を選択してください</p>
+<!--年月選択エリア-->
+            <select name="Year"value="<%= hsh.get('Year') %>" id = "yearid">				<!-- 年 -->
+                <% for(var i = 2005;i<=2100;i++){ 
+                    if(hsh.get('Year') == i){    %>
+                        <option value="<%= i %>" selected><%= i %></option>
+                    <% }else{ %>
+                        <option value="<%= i %>"><%= i %></option>
+                    <% } %>        
+                <% }%>
+               
+            </select>
+            /
+            <select name="Month"value="<%= hsh.get('Month') %>" id = "monthid">				<!-- 月 -->
+                <% for(var i = 1;i <= 12;i++){ %>
+                    <% if(i < 10){  %>
+                        <% if(hsh.get('Month') == "0"+i){    %>
+                            <option value="0<%= i %>" selected>0<%= i %></option>
+                        <% }else{ %>
+                            <option value="0<%= i %>">0<%= i %></option>
+                        <% } %>
+                    <% }else{ %>
+                        <% if(hsh.get('Month') == i){    %>
+                            <option value="<%= i %>" selected><%= i %></option>
+                        <% }else{ %>
+                            <option value="<%= i %>"><%= i %></option>
+                        <% } %>
+                    <% } %>
+                <% } %>
+            </select>
+            <br>
+<!--取り込みボタン-->
+            <p><input type = "submit" value = "取り込み" name = "import_process"></p>
+
+            <br>
+            <p>
+<!-- 処理中でエラーがあったら表示 -->
+             <% if(hsh.get('errorResult') == '1'){ %>
+                <table>
+
+<!--画面入力エラー項目-->
+                    <% for(var n = 1;n <= 2;n++){ %>
+                        <% if(hsh.get('error' + n) != ''){ %>
+                            <tr class = 'red'><td><%= hsh.get('error' + n) %></td></tr>
+                        <% } %>
+                    <% } %>
+                            <tr><td></td></tr>
+
+                    
+
+<!--Excelエラー項目-->
+            <!-- 処理シート数分繰り返し -->
+                    <% for(var n = 1;n <= hsh.get('sheetCount');n++){ %>
+
+        <!--項目数エラー発生-->
+                        <% if(hsh.get('sheetError' + n) != ''){ %>
+                            <tr class = 'red'><td><%= hsh.get('sheetError' + n) %></td></tr>
+                        <% } %>
+
+                        <tr><td></td></tr>
+
+        <!-- 書くシート毎にデータ行数分繰り返し -->
+                        <% for(var e = 5;e < 5 + hsh.get('dataCount'+n);e++){ %>
+                            <% if(hsh.get('excelError'+n).get('salesDataError' + e).get('errorResult') == "1"){ %>
+
+                <!-- 項目数分繰り返し -->
+                                <% if(hsh.get('summaryCount' + n) == 1 || hsh.get('summaryCount' + n) == 0){ %>
+                                    <% for(var i = 0;i <= 15;i++){ %>
+                                        <% if(hsh.get('excelError' + n).get('salesDataError' + e).get('itemError'+ i) != ''){ %>
+                                            <tr class = "red"><td><%= hsh.get('excelError' + n).get('salesDataError' + e).get('itemError'+ i) %></td></tr>
+                                        <% } %>
+                                    <% } %>
+                                <% }else if(hsh.get('summaryCount' + n) == 2){ %>
+                                    <% for(var i = 0;i <= 18;i++){ %>
+                                        <% if(hsh.get('excelError' + n).get('salesDataError' + e).get('itemError'+ i) != ''){ %>
+                                            <tr class = "red"><td><%= hsh.get('excelError' + n).get('salesDataError' + e).get('itemError'+ i) %></td></tr>
+                                        <% } %>
+                                    <% } %>
+                                <% } %>
+                            <% } %>
+                        <% } %>
+
+                        <tr><td></td></tr>
+
+        <!--集計情報のエラー項目-->
+                        <% if(hsh.get('excelError'+n) != null){ %>
+                            <% if(hsh.get('excelError'+n).get('summaryError').get('errorResult') == '1'){ %>
+                                <% if(hsh.get('summaryCount' + n) == 1){ %>
+                <!-- 項目数分繰り返し -->
+                                    <% for(var i = 1;i <= 12;i++){ %>
+                                        <% if(hsh.get('excelError' + n).get('summaryError').get('itemError'+ i) != null){ %>
+                                            <% if(hsh.get('excelError' + n).get('summaryError').get('itemError'+ i) != ''){ %>
+                                                <tr class = "red"><td><%= hsh.get('excelError' + n).get('summaryError').get('itemError'+ i) %></td></tr>
+                                            <% } %>
+                                        <% } %>
+                                    <% } %>
+                                <% }else if(hsh.get('summaryCount' + n) == 2){ %>
+                                    <% for(var i = 1;i <= 4;i++){ %>
+                                        <% if(hsh.get('excelError' + n).get('summaryError').get('itemError'+ i) != null){ %>
+                                            <% if(hsh.get('excelError' + n).get('summaryError').get('itemError'+ i) != ''){ %>
+                                                <tr class = "red"><td><%= hsh.get('excelError' + n).get('summaryError').get('itemError'+ i) %></td></tr>
+                                            <% } %>
+                                        <% } %>
+                                    <% } %>
+                                <% } %>
+                            <% } %>
+                        <% } %>
+                        <tr><td></td></tr>
+    <!--重複エラー発生-->
+                        <% if(hsh.get('duplicationError' + n) != ''){ %>
+                            <tr class = 'red'><td><%= hsh.get('duplicationError' + n) %></td></tr>
+                        <% } %>
+                    <% } %>
+                </table>
+            <% } %>
+
+<!-- 取り込み完了文言 -->
+            <% if(hsh.get('errorResult') == '0'){ %> 
+                <table>
+                    <% for(var i = 0;i <= hsh.get('sheetCount');i++){ %>
+                        <tr><td><%= hsh.get('completed' + i) %></td></tr>
+                    <% } %>
+                    <tr><td><%= hsh.get('completed') %></td></tr>
+                </table>
+            <% } %>
+            </p>
+
+
+            <input type = "hidden" value = "<%= hsh.get('popUpError') %>" id = "popUpErrorid">            <!--ポップアップエラー文言-->
+        
+<!--戻るボタン-->
+            <p><input type = "button" value = "戻る" onclick="location.href='/search_list'"></p>
+
+        </form> 
+    </body>
+</html>

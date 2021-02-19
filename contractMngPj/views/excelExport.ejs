@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <title>Excel取り込み</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<style>
+    .center {
+        text-align: center;
+    }
+
+    .red {
+        color: red;
+    }
+</style>
+<script type="text/javascript">
+
+
+
+</script>
+
+<body>
+    <form action="/writeExcel/Export" method="post">
+        <p class="center">Excel出力</p>
+        <p></p>
+        <!--注意事項欄-->
+        <p>出力先のフォルダのパスを指定して下さい</p>
+
+        <!--テキストエリア-->
+        <p><input type="text" name="path" size="50%" value=<%= path %>></p>
+        <br>
+
+        <!--年月選択エリア-->
+        <p>過去の情報を出力する場合は年月をそれぞれ選択してください</p>
+        <select name="fromYear" value=<%= fromYear %>>
+            <!-- 年 -->
+            <% for(var i = 2005;i<=2100;i++){ 
+                if(i==fromYear){
+                    %>
+            <option value="<%= i %>" selected> <%= i %></option>
+            <% }else{ %>
+                <option value="<%= i %>"><%= i %></option>
+           <% } %>
+            <% }%>
+
+        </select>
+        
+        <select name="fromMonth" value=<%= fromMonth %>>
+            <!-- 月 -->
+            <% for(var i = 1;i<=12;i++){ 
+                        if(i <= 9){
+                            if(i==fromMonth){
+                %>
+            <option value="0<%= i %>" selected>0<%= i %></option>
+            <% }else{ %>
+                <option value="0<%= i %>">0<%= i %></option>
+           <% } %>
+                        <% }else{ %>
+                          <%  if(i==fromMonth){ %>
+                <option value="<%= i %>" selected><%= i %></option>
+                <% }else{ %>
+                    <option value="<%= i %>"><%= i %></option>
+               <% } %>
+            <%
+                        }
+                    }
+                %>
+        </select>
+        ～
+        <select name="toYear"value=<%= toYear %>>
+            <!-- 年 -->
+            <% for(var i = 2005;i<=2100;i++){ 
+                if(i==toYear){
+                    %>
+            <option value="<%= i %>" selected> <%= i %></option>
+            <% }else{ %>
+                <option value="<%= i %>"><%= i %></option>
+           <% } %>
+            <% }%>
+
+
+        </select>
+        /
+        <select name="toMonth" value=<%= toMonth %>>
+            <!-- 月 -->
+            <% for(var i = 1;i<=12;i++){ 
+                if(i <= 9){
+                    if(i==toMonth){
+        %>
+    <option value="0<%= i %>" selected>0<%= i %></option>
+    <% }else{ %>
+        <option value="0<%= i %>">0<%= i %></option>
+   <% } %>
+                <% }else{ %>
+                  <%  if(i==toMonth){ %>
+        <option value="<%= i %>" selected><%= i %></option>
+        <% }else{ %>
+            <option value="<%= i %>"><%= i %></option>
+       <% } %>
+    <%
+                }
+            }
+        %>
+        </select>
+        <br>
+        <!--出力ボタン-->
+        <p><input type="submit" value="過去情報の出力" name="exportHistory"></p>
+        <p><input type="submit" value="最新情報の出力" name="exportLatest"></p>
+        <br>
+
+        <!--戻るボタン-->
+        <p><input type="button" value="戻る" onclick="location.href='/search_list'">></p>
+
+      <table>
+
+        <% if(errormsg==''){ %>
+            <% for(var n = 0;n <= msghash.size ;n++){ %>
+                <% if(msghash.get('MSG' + n) != ''){ %>
+                    <tr><td><%= msghash.get('MSG' + n) %></td></tr>
+                <% } %>
+            <% } %>
+            <% } %>
+            <tr class = 'red'><td><%= errormsg %></td></tr>
+
+        </table>
+            
+    </form>
+
+</body>
+
+</html>

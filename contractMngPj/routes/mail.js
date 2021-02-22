@@ -39,7 +39,7 @@ var message = {
 };
 
 // メール送信時間の設定
-cron.schedule('47 11 * * *', () => {
+cron.schedule('44 10 * * *', () => {
     sendMailJob();
 });
 
@@ -113,7 +113,7 @@ async function sendMailJob() {
             + ' FROM latest_information a,'
             + ' (SELECT SUBDATE(STR_TO_DATE(end_date,\'%Y\/%m\/%d\'),INTERVAL 1 MONTH) as ymd,engineer_name'
             + ' FROM latest_information WHERE email_history=0 AND sheet_no = 1) b'
-            + ' where a.engineer_name=b.engineer_name AND ymd <= now() AND a.sheet_no = 1'
+            + ' where a.engineer_name=b.engineer_name AND SUBDATE(STR_TO_DATE(ymd,\'%Y-%m-%d\'),INTERVAL 7 DAY) <= now() AND a.sheet_no = 1'
             + ' ORDER BY end_date ASC');
 
 
@@ -172,7 +172,7 @@ async function sendMailJob() {
             + ' FROM latest_information a,'
             + ' (SELECT SUBDATE(STR_TO_DATE(end_date,\'%Y\/%m\/%d\'),INTERVAL 1 MONTH) as ymd,engineer_name'
             + ' FROM latest_information WHERE email_history=1 AND sheet_no = 1) b'
-            + ' where a.engineer_name=b.engineer_name AND ymd <= now() AND a.sheet_no = 1');
+            + ' where a.engineer_name=b.engineer_name AND SUBDATE(STR_TO_DATE(ymd,\'%Y-%m-%d\'),INTERVAL 1 DAY) <= now() AND a.sheet_no = 1');
 
 
 

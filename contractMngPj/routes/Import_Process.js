@@ -183,12 +183,14 @@ async function errorCheck(path, date) {
                                 var dataCount = 0;                                                          //営業データ数
                             //シート毎に減算する数値が変わる
                                 if (summary == 1) {
-                                    dataCount = endCol - 18;
+                                    dataCount = endCol - 17;
                                 } else if (summary == 2) {
                                     dataCount = endCol - 10;
                                 } else if (summary == 0) {
                                     dataCount = endCol - 5;
                                 }
+
+                                console.log("データ行数:"+dataCount);
 
 //ファイルの営業データ情報の正入力判別
                                 excelErrorHsh = await excelCheck(sheet_name_list[b], sheetInformation, dataCount, date, endCol);
@@ -687,6 +689,7 @@ async function excelCheck(sheetName, sheetInfo, dataCount, date, endCol) {
 
             //稼働一覧ページの集計情報
             if (summary == 1) {
+
                 //4.末落ち件数のエラーチェック
                 if (sheetInfo['M' + (dataCount + 10)] != null) {
 
@@ -773,7 +776,7 @@ async function excelCheck(sheetName, sheetInfo, dataCount, date, endCol) {
                         //営業別受注件数の入力チェッック
                         if (sheetInfo['L' + s] != null && sheetInfo['M' + s] != null) {
                             //データ数チェック
-                            inputError = await coCk.dataCountCheck(sheetName, sheetInfo['L' + s].v, sheetInfo['M' + s].v, 13, s);
+                            inputError = await coCk.dataCountCheck(sheetName, sheetInfo['L' + s].v, sheetInfo['M' + s].v, 14, s);
                             errorHsh.set("itemError" + inputErrorCount, inputError);
                             if (inputError != "") {
                                 errorHsh.set("errorResult", "1");
@@ -860,7 +863,7 @@ async function importProcess(path, date) {
                                 var sheetNo = sheetRows[i].sheet_No;
                                 var registrationCount = 0;
                                 if (summary == 1) {
-                                    dataCount = endCol - 18;
+                                    dataCount = endCol - 17;
                                 } else if (summary == 2) {
                                     dataCount = endCol - 10;
                                 } else if (summary == 0) {
@@ -1022,7 +1025,7 @@ async function importProcess(path, date) {
                             var sheetNo = sheetRows[i].sheet_No;
                             var registrationCount = 0;
                             if (summary == 1) {
-                                subtractLineCount = 18;
+                                subtractLineCount = 17;
                             } else if (summary == 2) {
                                 subtractLineCount = 10;
                             } else if (summary == 0) {
@@ -1154,7 +1157,7 @@ async function importProcess(path, date) {
                             if (summary != 0) {
                                 var sheetNo = await coGt.getSheetNo(sheet_name_list[b]);
                                 if (summary == 1) {
-                                    subtractLineCount = 18;
+                                    subtractLineCount = 17;
                                 } else if (summary == 2) {
                                     subtractLineCount = 10;
                                 } else if (summary == 0) {
@@ -1171,6 +1174,7 @@ async function importProcess(path, date) {
                                 var ordercountNewTarget = 0;                            //新規受注件数目標
                                 var ordercountGAP = 0;                            //受注件数GAP
                                 let summaryData = null;
+
 
                                 //平均売上
                                 if (sheetInfo['M' + summaryCount] != null) {

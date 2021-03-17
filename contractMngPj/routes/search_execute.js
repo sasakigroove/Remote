@@ -2,7 +2,7 @@ const mysql2 = require('mysql2/promise');
 var mysql_setting = {
   host: 'localhost',
   user: 'root',
-  password: 'root',
+  password: 'passpass',
   database: 'contractPj'
 
 }
@@ -26,7 +26,7 @@ exports.searchcheck = async function (
   end_before_month,                   //稼働終了日で絞り込み月（前）
   end_after_year,                     //稼働終了日で絞り込み年（後）
   end_after_month,                    //稼働終了日で絞り込み月（後）
-  sort1, sort2, sort3, sort4, 
+  sort1, sort2, sort3, sort4,
   sort5, sort6, sort7, sort8,
   sort9, sort10, sort11, sort12,      //各ソートボタンに画面でASCとDESCの保持をしておく用
   sort13, sort14, sort15,
@@ -55,12 +55,12 @@ exports.searchcheck = async function (
   var summary_yymm = "";                //集計情報を出すための検索条件に入る年月範囲
   var nengatu = "";                     //画面にYYYY年MM月の形で出す文字列を作成する用の変数
   var tougetu_hantei = 0;               //集計情報を出す際、当月で絞り込まれていた場合は当月を取得するため、当月で絞り込まれているかどうかを判定するための変数
-  var where_all =0;                     //すべての履歴を表示が選択されたときにwhereが空になってしまいwhereに初期表示用の検索条件が入るのを防止するための変数
-  var nameMap = new HashMap();            
+  var where_all = 0;                     //すべての履歴を表示が選択されたときにwhereが空になってしまいwhereに初期表示用の検索条件が入るのを防止するための変数
+  var nameMap = new HashMap();
   var eigyoudeta = new HashMap();
   var nengetu_hsh = new HashMap();
   var summary_hsh = new HashMap();
-  var excel_hantei_summary =0;          //指定なしでシートとExcel取り込み年月を選択したときに当月ではなくExcel取り込み年月で絞り込んだ範囲を
+  var excel_hantei_summary = 0;          //指定なしでシートとExcel取り込み年月を選択したときに当月ではなくExcel取り込み年月で絞り込んだ範囲を
 
 
   if (period_radio == "6" || period_radio == "2" || excel_before_year != "0" || excel_after_year != "0" ||
@@ -164,7 +164,7 @@ exports.searchcheck = async function (
         }
         if (toY != "0" && toM != "0") {
           //月末の取得
-         
+
           var fromDate = new Date(toY, toM, 0);
 
           afterymd =
@@ -211,7 +211,7 @@ exports.searchcheck = async function (
           } else {
             where = where + " STR_TO_DATE(start_date,'%Y年%m月%d日') >= STR_TO_DATE('" + beforeymd + "','%Y年%m月%d日') AND STR_TO_DATE(start_date,'%Y年%m月%d日') <= STR_TO_DATE('" + afterymd + "','%Y年%m月%d日') ";
           }
-          
+
         } else if (beforeymd != "0") {
           //指定された稼働開始日～で検索
           if (where == "") {
@@ -261,10 +261,10 @@ exports.searchcheck = async function (
           } else {
             where = where + " STR_TO_DATE(end_date,'%Y年%m月%d日') >= STR_TO_DATE('" + beforeymd + "','%Y年%m月%d日') AND STR_TO_DATE(end_date,'%Y年%m月%d日') <= STR_TO_DATE('" + afterymd + "','%Y年%m月%d日') ";
           }
-          
+
         } else if (beforeymd != "0") {
           //指定された稼働終了日～で検索
-   
+
           if (where == "") {
             where = where + " WHERE STR_TO_DATE(end_date,'%Y年%m月%d日') >= STR_TO_DATE('" + beforeymd + "','%Y年%m月%d日')  ";
           } else {
@@ -290,7 +290,7 @@ exports.searchcheck = async function (
         }
       } else if (period_radio == "8") {
         //全ての履歴を表示
-        where =  "";
+        where = "";
         where_all = 1;
 
       }
@@ -302,7 +302,7 @@ exports.searchcheck = async function (
   //ジャンル検索
   if (keyword == null || keyword == "") {
   } else {
-   
+
     if (genre_pulldown == "0") {
       hshMap.set('msg', "ジャンルプルダウンを選択してください");
     }
@@ -351,7 +351,7 @@ exports.searchcheck = async function (
 
 
   if (sheet_pulldown != "0") {
-  
+
     if (!(sheet_pulldown == 0)) {
       //シート別で絞り込みが選択されている
       if (where == "") {
@@ -365,25 +365,25 @@ exports.searchcheck = async function (
   //Ｅｘｃｅｌ取り込み年月
   if (hshMap.get('msg') == null) {
     if (excel_before_year != 0 && excel_after_month != 0 && excel_after_year != 0 && excel_after_month != 0) {
-    
+
       if (where == "") {
-     
+
         where = where + " WHERE STR_TO_DATE('" + beforeymd + "','%Y/%m') <= STR_TO_DATE(a.year_month_date,'%Y/%m') AND STR_TO_DATE(a.year_month_date,'%Y/%m') <=STR_TO_DATE('" + afterymd + "','%Y/%m')  ";
       } else {
         where = where + " AND  STR_TO_DATE('" + beforeymd + "','%Y/%m') <= STR_TO_DATE(a.year_month_date,'%Y/%m') AND STR_TO_DATE(a.year_month_date,'%Y/%m') <=STR_TO_DATE('" + afterymd + "','%Y/%m')  ";
       }
-      
+
       summaryWhere = summaryWhere + " AND  STR_TO_DATE('" + beforeymd + "','%Y/%m') <= STR_TO_DATE(a.year_month_date,'%Y/%m') AND STR_TO_DATE(a.year_month_date,'%Y/%m') <=STR_TO_DATE('" + afterymd + "','%Y/%m')  ";
 
       groupby = " GROUP BY a.year_month_date "
       excel_hantei_summary = 1;
     } else if (excel_before_year != 0 && excel_before_month != 0) {
-     
+
       if (where == "") {
         where = where + " WHERE STR_TO_DATE('" + beforeymd + "','%Y/%m') <= STR_TO_DATE(a.year_month_date,'%Y/%m')  ";
       } else {
         where = where + " AND  STR_TO_DATE('" + beforeymd + "','%Y/%m') <= STR_TO_DATE(a.year_month_date,'%Y/%m')  ";
-        
+
       }
 
       summaryWhere = summaryWhere + " AND  STR_TO_DATE('" + beforeymd + "','%Y/%m') <= STR_TO_DATE(a.year_month_date,'%Y/%m')  ";
@@ -393,12 +393,12 @@ exports.searchcheck = async function (
     } else if (excel_after_year != 0 && excel_after_month != 0) {
 
       if (where == "") {
-        
+
         where = where + " WHERE STR_TO_DATE(a.year_month_date,'%Y/%m') <=STR_TO_DATE('" + afterymd + "','%Y/%m')  ";
       } else {
         where = where + " AND STR_TO_DATE(a.year_month_date,'%Y/%m') <=STR_TO_DATE('" + afterymd + "','%Y/%m')  ";
       }
-      
+
       summaryWhere = summaryWhere + " AND STR_TO_DATE(a.year_month_date,'%Y/%m') <=STR_TO_DATE('" + afterymd + "','%Y/%m')  ";
 
       groupby = " GROUP BY a.year_month_date "
@@ -409,7 +409,7 @@ exports.searchcheck = async function (
   //----------------------------------------------------------------------------------------------------------
   //ソート
   if (sort_button != 0) {
-    console.log("ソート:"+sort_button);
+    console.log("ソート:" + sort_button);
     if (sort_button == 1) {
       //Excel取り込み年月
       if (sort1 == "ASC") {
@@ -613,14 +613,14 @@ exports.searchcheck = async function (
     if (where_all == 1) {
 
 
-    }else if(where == "" ) {
+    } else if (where == "") {
       //初期表示時は稼働終了日が当月かつシートNoが１のもの　ソート順は稼働終了日昇順
 
       where = where + " WHERE DATE_FORMAT(NOW(),'%Y%m') >= DATE_FORMAT(STR_TO_DATE(end_date,'%Y年%m月%d日'),'%Y%m') AND DATE_FORMAT(STR_TO_DATE(end_date,'%Y年%m月%d日'),'%Y%m') >= DATE_FORMAT(NOW(),'%Y%m') ";
 
-      tougetu_hantei =1;
+      tougetu_hantei = 1;
       groupby = " GROUP BY a.year_month_date "
-    } 
+    }
 
     if (gamenhantei == "0") {　//gamenhantei==0（画面出力用・稼働一覧のシートの情報のみを出力）
       if (where == "") {
@@ -681,12 +681,12 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
       + where
       + " GROUP BY  a.year_month_date,a.engineer_name,a.proposition_company,a.affiliation_manager,a.affiliation_company,a.affiliation_manager"
       + sort
-      );
+    );
 
     rowswork = rows;
     hshMap.set('rowsKey', rows);
     hshMap.set('size', rows.length);
-    console.log("検索結果件数"+rows.length);
+    console.log("検索結果件数" + rows.length);
     if (rows == 0 && gamenhantei != "1") {
       hshMap.set('msg', "該当する検索結果が存在しません");
 
@@ -744,14 +744,14 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
 
       hshMap.set('rowsKey', rows);
       hshMap.set('size', rows.length);
-      console.log("検索結果件数"+rows.length);
+      console.log("検索結果件数" + rows.length);
       [rowswork] = [rows];
 
 
 
     }
     //-------------------------------------------------------------------------------------------------------------
-   //合計を出す
+    //合計を出す
     //ジャンル検索が選択されていた場合は合計の欄を出さない
     if (genre_pulldown == "0") {
 
@@ -771,7 +771,7 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
             INNER JOIN Sheet_master c ON a.sheet_No=c.sheet_No `+ where);
 
       hshMap.set('sum', sum);
-     
+
 
 
     }
@@ -784,85 +784,85 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
     if (rows == 0) {
 
       sheet_pulldown = "0";
-      tougetu_hantei =1;
-      where ="";
+      tougetu_hantei = 1;
+      where = "";
       groupby = " GROUP BY a.year_month_date ";
     }
 
-  if(sheet_pulldown !="0" || sheet_pulldown !="1"){
-    if(period_radio == "0"){
-      if(excel_hantei_summary != 1){
-        tougetu_hantei =1;
-        groupby = " GROUP BY a.year_month_date "
+    if (sheet_pulldown != "0" || sheet_pulldown != "1") {
+      if (period_radio == "0") {
+        if (excel_hantei_summary != 1) {
+          tougetu_hantei = 1;
+          groupby = " GROUP BY a.year_month_date "
+        }
       }
     }
-  }
 
-      //ここから営業別受注件数の判定
+    //ここから営業別受注件数の判定
 
 
-      //範囲検索で一か月で絞り込めることが可能な検索条件にはgroupbyの変数が入っている
-      //Excel取り込み年月、稼働開始当月、稼働終了日当月のみ
-      if (groupby != "") {
-   
-        if (tougetu_hantei == 1) {
-          var dt = new Date();
-          summary_yymm = dt.toFormat("YYYY/MM")
-          where = " WHERE a.year_month_date = '" + summary_yymm + "' "
-          nengatu = dt.toFormat("YYYY年MM月")
-          console.log("集計情報の表示--当月判定")
-          
+    //範囲検索で一か月で絞り込めることが可能な検索条件にはgroupbyの変数が入っている
+    //Excel取り込み年月、稼働開始当月、稼働終了日当月のみ
+    if (groupby != "") {
 
-        }
+      if (tougetu_hantei == 1) {
+        var dt = new Date();
+        summary_yymm = dt.toFormat("YYYY/MM")
+        where = " WHERE a.year_month_date = '" + summary_yymm + "' "
+        nengatu = dt.toFormat("YYYY年MM月")
+        console.log("集計情報の表示--当月判定")
 
-        if (sheet_pulldown != "1" && sheet_pulldown != "0") {
-          //検索でシートが稼働一覧以外に選択されている
-          //どの集計情報を出力すればよいかsummary_itemを検索してチェックする
-          console.log("集計情報の表示--シートが指定されている")
-          const [check] = await mycon.query(
-            `SELECT
+
+      }
+
+      if (sheet_pulldown != "1" && sheet_pulldown != "0") {
+        //検索でシートが稼働一覧以外に選択されている
+        //どの集計情報を出力すればよいかsummary_itemを検索してチェックする
+        console.log("集計情報の表示--シートが指定されている")
+        const [check] = await mycon.query(
+          `SELECT
                     summary_item
               FROM
                     sheet_master
               WHERE sheet_No = `+ sheet_pulldown);
 
-        
-          if (check[0].summary_item == "2") {
-            //summary_item ==2(営業別)
-            hshMap.set('summary_judgement', "2");
-            if(where==""){
-              where = "WHERE a.sheet_No = "+ sheet_pulldown
 
-            }else{
-              where =  where + " AND a.sheet_No = "+ sheet_pulldown
+        if (check[0].summary_item == "2") {
+          //summary_item ==2(営業別)
+          hshMap.set('summary_judgement', "2");
+          if (where == "") {
+            where = "WHERE a.sheet_No = " + sheet_pulldown
 
-            }
+          } else {
+            where = where + " AND a.sheet_No = " + sheet_pulldown
+
+          }
 
 
-            const [summary_check] = await mycon.query(
-              ` SELECT 
+          const [summary_check] = await mycon.query(
+            ` SELECT 
                         a.year_month_date
                   FROM  
                         management_history a INNER JOIN Summary_table b ON a.sheet_No=b.sheet_No AND a.year_month_date=b.year_month_date
                         INNER  JOIN Sheet_master c ON a.sheet_No=c.sheet_No `
-              + where
-              + groupby);
-
-    
-
-              var ymdArray = new HashMap();
-              var b = "";
-  
-              for (var i = 0; i < summary_check.length; i++) {
-  
-                ymdArray.set(i, summary_check[i].year_month_date.toString())
-                summary_yymm = summary_check[i].year_month_date.toString();
-                b = summary_yymm.replace('/', '年');
-                nengatu = b + "月"
+            + where
+            + groupby);
 
 
 
-                
+          var ymdArray = new HashMap();
+          var b = "";
+
+          for (var i = 0; i < summary_check.length; i++) {
+
+            ymdArray.set(i, summary_check[i].year_month_date.toString())
+            summary_yymm = summary_check[i].year_month_date.toString();
+            b = summary_yymm.replace('/', '年');
+            nengatu = b + "月"
+
+
+
+
             const [summary] = await mycon.query(
 
               `SELECT
@@ -876,47 +876,47 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
                       summary_table b INNER JOIN sheet_master c ON b.sheet_No=c.sheet_No
                 WHERE c.sheet_No = `+ sheet_pulldown + " ORDER BY year_month_date DESC");
 
-                
-              nengetu_hsh.set('average_sales' + i , nengatu + "　" + summary[0].sales_name+ "　" + "平均売上");
-              nengetu_hsh.set('average_profit' + i , nengatu + "　" + summary[0].sales_name+ "　" +  "平均利益");
-              nengetu_hsh.set('operating_count' + i , nengatu + "　" + summary[0].sales_name+ "　" +  "稼働件数");
-              nengetu_hsh.set('a_star' + i , nengatu + "　" + summary[0].sales_name+ "　" +  "A-STAR");
-              summary_hsh.set('summary_average_sales' + i , summary[0].average_sales);
-              summary_hsh.set('summary_average_profit' + i , summary[0].average_profit);
-              summary_hsh.set('summary_operating_count' + i , summary[0].operating_count);
-              summary_hsh.set('summary_a_star' + i , summary[0].a_star);
 
-              }
-              hshMap.set('summary_check',summary_check.length)
-              hshMap.set('now_mm_hsh',nengetu_hsh)
-              hshMap.set('summary_hsh',summary_hsh)
-            }
-              
-//==================ここまでシートNo+シートプルダウンが押された場合の集計情報出力=================
-          }else if(sheet_pulldown=="1" || sheet_pulldown=="0"){
+            nengetu_hsh.set('average_sales' + i, nengatu + "　" + summary[0].sales_name + "　" + "平均売上");
+            nengetu_hsh.set('average_profit' + i, nengatu + "　" + summary[0].sales_name + "　" + "平均利益");
+            nengetu_hsh.set('operating_count' + i, nengatu + "　" + summary[0].sales_name + "　" + "稼働件数");
+            nengetu_hsh.set('a_star' + i, nengatu + "　" + summary[0].sales_name + "　" + "A-STAR");
+            summary_hsh.set('summary_average_sales' + i, summary[0].average_sales);
+            summary_hsh.set('summary_average_profit' + i, summary[0].average_profit);
+            summary_hsh.set('summary_operating_count' + i, summary[0].operating_count);
+            summary_hsh.set('summary_a_star' + i, summary[0].a_star);
+
+          }
+          hshMap.set('summary_check', summary_check.length)
+          hshMap.set('now_mm_hsh', nengetu_hsh)
+          hshMap.set('summary_hsh', summary_hsh)
+        }
+
+        //==================ここまでシートNo+シートプルダウンが押された場合の集計情報出力=================
+      } else if (sheet_pulldown == "1" || sheet_pulldown == "0") {
 
 
-          const [summary_check] = await mycon.query(
-            ` SELECT 
+        const [summary_check] = await mycon.query(
+          ` SELECT 
                       a.year_month_date
               FROM    management_history a INNER JOIN Summary_table b ON a.sheet_No=b.sheet_No AND a.year_month_date=b.year_month_date
                       INNER  JOIN Sheet_master c ON a.sheet_No=c.sheet_No `
-                      + where
-                      + groupby);
-                      
-            var ymdArray = new HashMap();
-            var b = "";
+          + where
+          + groupby);
 
-            for (var i = 0; i < summary_check.length; i++) {
+        var ymdArray = new HashMap();
+        var b = "";
 
-              ymdArray.set(i, summary_check[i].year_month_date.toString())
-              summary_yymm = summary_check[i].year_month_date.toString();
-              b = summary_yymm.replace('/', '年');
-              nengatu = b + "月"
-           
+        for (var i = 0; i < summary_check.length; i++) {
 
-              const [eigyoubetu] = await mycon.query(
-                `SELECT
+          ymdArray.set(i, summary_check[i].year_month_date.toString())
+          summary_yymm = summary_check[i].year_month_date.toString();
+          b = summary_yymm.replace('/', '年');
+          nengatu = b + "月"
+
+
+          const [eigyoubetu] = await mycon.query(
+            `SELECT
                           b.year_month_date,
                           b.sheet_No,
                           b.ordercount_sales,
@@ -928,8 +928,8 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
                           AND     ( b.year_month_date = '`+ summary_yymm + "') ORDER BY b.year_month_date ASC");
 
 
-              const [summary] = await mycon.query(
-                `SELECT
+          const [summary] = await mycon.query(
+            `SELECT
                         b.year_month_date,
                         b.average_sales,
                         b.average_profit,
@@ -945,56 +945,56 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
 
 
 
- 
-
-
-              nengetu_hsh.set('average_sales' + i , nengatu + "　" + "平均売上");
-              nengetu_hsh.set('average_profit' + i , nengatu + "　" + "平均利益");
-              nengetu_hsh.set('operating_count' + i , nengatu + "　" + "稼働件数");
-              nengetu_hsh.set('month_end_count' + i , nengatu + "　" + "末落ち件数");
-              nengetu_hsh.set('ordercount_new' + i , nengatu + "　" + "新規受注件数");
-              nengetu_hsh.set('ordercount_new_target' + i , nengatu + "　" + "新規受注件数目標");
-              nengetu_hsh.set('ordercount_GAP' + i , nengatu + "　" + "受注件数GAP");
-              summary_hsh.set('summary_average_sales' + i , summary[0].average_sales);
-              summary_hsh.set('summary_average_profit' + i , summary[0].average_profit);
-              summary_hsh.set('summary_operating_count' + i , summary[0].operating_count);
-              summary_hsh.set('summary_month_end_count' + i , summary[0].month_end_count);
-              summary_hsh.set('summary_ordercount_new' + i , summary[0].ordercount_new);
-              summary_hsh.set('summary_ordercount_new_target' + i , summary[0].ordercount_new_target);
-              summary_hsh.set('summary_ordercount_GAP' + i , summary[0].ordercount_GAP);
-
-              
 
 
 
-              for (var y = 0; y < eigyoubetu.length; y++) {
+          nengetu_hsh.set('average_sales' + i, nengatu + "　" + "平均売上");
+          nengetu_hsh.set('average_profit' + i, nengatu + "　" + "平均利益");
+          nengetu_hsh.set('operating_count' + i, nengatu + "　" + "稼働件数");
+          nengetu_hsh.set('month_end_count' + i, nengatu + "　" + "末落ち件数");
+          nengetu_hsh.set('ordercount_new' + i, nengatu + "　" + "新規受注件数");
+          nengetu_hsh.set('ordercount_new_target' + i, nengatu + "　" + "新規受注件数目標");
+          nengetu_hsh.set('ordercount_GAP' + i, nengatu + "　" + "受注件数GAP");
+          summary_hsh.set('summary_average_sales' + i, summary[0].average_sales);
+          summary_hsh.set('summary_average_profit' + i, summary[0].average_profit);
+          summary_hsh.set('summary_operating_count' + i, summary[0].operating_count);
+          summary_hsh.set('summary_month_end_count' + i, summary[0].month_end_count);
+          summary_hsh.set('summary_ordercount_new' + i, summary[0].ordercount_new);
+          summary_hsh.set('summary_ordercount_new_target' + i, summary[0].ordercount_new_target);
+          summary_hsh.set('summary_ordercount_GAP' + i, summary[0].ordercount_GAP);
 
-                nameMap.set('name' + i + y, nengatu + "　" + eigyoubetu[y].sales_name + "受注件数")
-                eigyoudeta.set('deta' + i + y, eigyoubetu[y].ordercount_sales)
-              }
 
-            }
-          hshMap.set('eigyoubetu_check', y)
-          hshMap.set('summary_check', summary_check.length)
-          hshMap.set('now_mm_hsh', nengetu_hsh)
-          hshMap.set('summary_hsh', summary_hsh)
-          hshMap.set('summary_judgement', "1");
-          //eigyoubetu_hanteiは画面に営業別受注件数を表示するかしないかの判定をするためのキー
-          hshMap.set('eigyoubetu_hantei', "0")
-          hshMap.set('eigyoubetu_name', nameMap)
-          hshMap.set('eigyoubetu_deta', eigyoudeta)
 
-        } else if (check[0].summary_item == "0" || check[0].summary_item == null) {
-          //summary_item ==0(集計情報を出力しない)
-      
-          hshMap.set('summary_judgement', "3");
-      
+
+
+          for (var y = 0; y < eigyoubetu.length; y++) {
+
+            nameMap.set('name' + i + y, nengatu + "　" + eigyoubetu[y].sales_name + "受注件数")
+            eigyoudeta.set('deta' + i + y, eigyoubetu[y].ordercount_sales)
+          }
+
         }
-      
+        hshMap.set('eigyoubetu_check', y)
+        hshMap.set('summary_check', summary_check.length)
+        hshMap.set('now_mm_hsh', nengetu_hsh)
+        hshMap.set('summary_hsh', summary_hsh)
+        hshMap.set('summary_judgement', "1");
+        //eigyoubetu_hanteiは画面に営業別受注件数を表示するかしないかの判定をするためのキー
+        hshMap.set('eigyoubetu_hantei', "0")
+        hshMap.set('eigyoubetu_name', nameMap)
+        hshMap.set('eigyoubetu_deta', eigyoudeta)
+
+      } else if (check[0].summary_item == "0" || check[0].summary_item == null) {
+        //summary_item ==0(集計情報を出力しない)
+
+        hshMap.set('summary_judgement', "3");
+
+      }
 
 
-    }else{
-      hshMap.set('eigyoubetu_hantei',"1")
+
+    } else {
+      hshMap.set('eigyoubetu_hantei', "1")
       hshMap.set('summary_judgement', "3");
 
     }
@@ -1040,7 +1040,7 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
         madika.set("madi" + err_split[i], "4");
       }
       for (var i = 0; i < rowswork.length; i++) {
-     
+
 
         if (rowswork[i].warning_red == "warning") {
           // 赤で表示するやつ(契約終了間近)
@@ -1078,7 +1078,7 @@ management_history a LEFT JOIN Summary_table b ON a.sheet_No=b.sheet_No  AND a.y
       c.sheet_No,
       a.year_month_date
       FROM
-      Sheet_master c LEFT JOIN (SELECT * FROM management_history a `+where+`  ) a
+      Sheet_master c LEFT JOIN (SELECT * FROM management_history a `+ where + `  ) a
       ON a.sheet_No=c.sheet_No
       LEFT JOIN Summary_table b
       ON a.sheet_No=b.sheet_No AND a.year_month_date=b.year_month_date 

@@ -14,7 +14,7 @@ const mysql2 = require('mysql2/promise');
 var mysql_setting = {
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: 'passpass',
     database: 'contractPj'
 }
 
@@ -23,7 +23,7 @@ const xutil = xlsx.utils; //util変数にセットしておくと楽
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-    
+
     var msghash = new HashMap();
     var data = { errormsg: '', msghash: msghash, path: 'C:\\', fromYear: '', fromMonth: '', toYear: '', toMonth: '' }
     res.render('excelExport', data);
@@ -52,7 +52,7 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
     // シートマスタの検索
 
 
-   try {
+    try {
         mycon = await mysql2.createConnection(mysql_setting);
         console.log('接続OK');
         console.log(path);
@@ -99,8 +99,8 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                         //元になるExcelファイルの読み込み
 
 
-                    //選択された月の売上合計と稼働件数と粗利益
-                    const [sum] = await mycon.query(`SELECT
+                        //選択された月の売上合計と稼働件数と粗利益
+                        const [sum] = await mycon.query(`SELECT
                     SUM(earnings) AS SUM_earnings,
                     SUM(gross_profit) AS SUM_gross_profit,
                     operating_count AS operating_count
@@ -108,9 +108,9 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                     ON a.sheet_No = b.sheet_No AND a.year_month_date = b.year_month_date
                     WHERE a.sheet_No = '1' AND a. `+ rset);
 
- 
-                    //営業ごとの受注件数取得
-                    const [ym] = await mycon.query(`select 
+
+                        //営業ごとの受注件数取得
+                        const [ym] = await mycon.query(`select 
                     ordercount_sales,a.sheet_No,sales_name,year_month_date
                     from summary_table a INNER JOIN sheet_master b
                     on a.sheet_No = b.sheet_No
@@ -130,13 +130,13 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                     from summary_table a INNER JOIN sheet_master b
                     on a.sheet_No = b.sheet_No
                      WHERE year_month_date = (SELECT MAX(year_month_date) FROM summary_table) AND (summary_item = 2 OR summary_item = 1)`);
-                    
-                     //読み込みたいファイル↓
+
+                        //読み込みたいファイル↓
                         XlsxPopulate.fromFileAsync("sample.xlsm")
                             .then(book => {
-//シートの数だけ繰り返すーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+                                //シートの数だけ繰り返すーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
                                 for (var s = 0; s < rows.length; s++) {
-                                    console.log('シート名'+rows[s].sheet_name);
+                                    console.log('シート名' + rows[s].sheet_name);
                                     var sheetname = book.sheet(rows[s].sheet_name);
 
                                     var Summary_Item1 = 0;
@@ -148,12 +148,12 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                             //稼働一覧
                                             if (rows[s].summary_item == 1) {
                                                 //summary_item1の結果分だけ罫線つける
-                                                console.log("sheetname:"+sheetname);
+                                                console.log("sheetname:" + sheetname);
 
-                                                var deleteRow = sheetname.range('B'+(Summary_Item1 + 5)+':P' + (Summary_Item1 + 5));
+                                                var deleteRow = sheetname.range('B' + (Summary_Item1 + 5) + ':P' + (Summary_Item1 + 5));
                                                 var deleted = searchHash.get('rowsKey')[i].deleted;
-                                                
-                                                if(deleted == 1){
+
+                                                if (deleted == 1) {
                                                     deleteRow.style("fill", "a9a9a9");
                                                 }
 
@@ -178,10 +178,10 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                                 newsheetNo = searchHash.get('rowsKey')[i].sheet_No;
                                             } else if (rows[s].summary_item == 2) {
 
-                                                var deleteRow = sheetname.range('B'+(Summary_Item2 + 5)+':S' + (Summary_Item2 + 5));
+                                                var deleteRow = sheetname.range('B' + (Summary_Item2 + 5) + ':S' + (Summary_Item2 + 5));
                                                 var deleted = searchHash.get('rowsKey')[i].deleted;
-                                                
-                                                if(deleted == 1){
+
+                                                if (deleted == 1) {
                                                     deleteRow.style("fill", "a9a9a9");
                                                 }
 
@@ -211,10 +211,10 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                                 newsheetNo = searchHash.get('rowsKey')[i].sheet_No;
                                             } else if (rows[s].summary_item == 0) {
 
-                                                var deleteRow = sheetname.range('B'+(Summary_Item3 + 5)+':P' + (Summary_Item3 + 5));
+                                                var deleteRow = sheetname.range('B' + (Summary_Item3 + 5) + ':P' + (Summary_Item3 + 5));
                                                 var deleted = searchHash.get('rowsKey')[i].deleted;
-                                                
-                                                if(deleted == 1){
+
+                                                if (deleted == 1) {
                                                     deleteRow.style("fill", "a9a9a9");
                                                 }
 
@@ -253,14 +253,14 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                                 //選択された年月が同じかの判定
                                                 if (exportHistory == "過去情報の出力") {
                                                     console.log("job4");
-                                                    console.log("beforeYM:"+beforeYM+",afterYM:"+afterYM);
+                                                    console.log("beforeYM:" + beforeYM + ",afterYM:" + afterYM);
                                                     //選択された年月が同じかの判定
                                                     if (beforeYM == afterYM) {
                                                         engineerRow = sheetname.range('L' + (Summary_Item1 + 7) + ':M' + (Summary_Item1 + 18));
                                                         engineerRow.style("border", true);
 
                                                         var speaceRow = sheetname.range('L' + (Summary_Item1 + 5) + ':M' + (Summary_Item1 + 6));
-                                                        speaceRow.style("border",false);
+                                                        speaceRow.style("border", false);
 
                                                         sheetname.cell("L" + (Summary_Item1 + 5)).value("");
                                                         sheetname.cell("L" + (Summary_Item1 + 6)).value("");
@@ -299,7 +299,7 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                                     engineerRow = sheetname.range('L' + (Summary_Item1 + 7) + ':M' + (Summary_Item1 + 18));
 
                                                     var speaceRow = sheetname.range('L' + (Summary_Item1 + 5) + ':M' + (Summary_Item1 + 6));
-                                                    speaceRow.style("border",false);
+                                                    speaceRow.style("border", false);
 
                                                     sheetname.cell("L" + (Summary_Item1 + 5)).value("");
                                                     sheetname.cell("L" + (Summary_Item1 + 6)).value("");
@@ -340,7 +340,7 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                                     if (beforeYM == afterYM) {
 
                                                         var speaceRow = sheetname.range('L' + (Summary_Item2 + 5) + ':M' + (Summary_Item2 + 6));
-                                                        speaceRow.style("border",false);
+                                                        speaceRow.style("border", false);
 
                                                         sheetname.cell("L" + (Summary_Item2 + 5)).value("");
                                                         sheetname.cell("L" + (Summary_Item2 + 6)).value("");
@@ -370,7 +370,7 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                                 if (beforeYM == afterYM) {
 
                                                     var speaceRow = sheetname.range('L' + (Summary_Item2 + 5) + ':M' + (Summary_Item2 + 6));
-                                                    speaceRow.style("border",false);
+                                                    speaceRow.style("border", false);
 
                                                     sheetname.cell("L" + (Summary_Item2 + 5)).value("");
                                                     sheetname.cell("L" + (Summary_Item2 + 6)).value("");
@@ -404,9 +404,9 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                             if (rows[s].summary_item == 2) {
                                                 if (beforeYM == afterYM) {
 
-                                                    
+
                                                     var speaceRow = sheetname.range('L' + (Summary_Item2 + 5) + ':M' + (Summary_Item2 + 6));
-                                                    speaceRow.style("border",false);
+                                                    speaceRow.style("border", false);
 
                                                     sheetname.cell("L" + (Summary_Item2 + 5)).value("");
                                                     sheetname.cell("L" + (Summary_Item2 + 6)).value("");
@@ -432,17 +432,17 @@ async function jonControl(req, res, exportHistory, path, fromyear, frommonth, to
                                         }
                                     }
                                 }
-                                    //↓で出力するExcelファイルの生成をしフォルダ名をつける
-                                    if (exportHistory == "過去情報の出力") {
-                                        if (beforeYM == afterYM) {
-                                            book.toFileAsync(path + '\\' + excel_before_year + "年" + excel_before_month + "月システム数字.xlsm");
+                                //↓で出力するExcelファイルの生成をしフォルダ名をつける
+                                if (exportHistory == "過去情報の出力") {
+                                    if (beforeYM == afterYM) {
+                                        book.toFileAsync(path + '\\' + excel_before_year + "年" + excel_before_month + "月システム数字.xlsm");
 
-                                        } else {
-                                            book.toFileAsync(path + '\\' + excel_before_year + "年" + excel_before_month + "月" + "-" + excel_after_year + "年" + excel_after_month + "月システム数字.xlsm");
-                                        }
                                     } else {
-                                        book.toFileAsync(path + '\\' + YEAR + "年" + month + "月システム数字.xlsm");
+                                        book.toFileAsync(path + '\\' + excel_before_year + "年" + excel_before_month + "月" + "-" + excel_after_year + "年" + excel_after_month + "月システム数字.xlsm");
                                     }
+                                } else {
+                                    book.toFileAsync(path + '\\' + YEAR + "年" + month + "月システム数字.xlsm");
+                                }
                             })
 
                     } else {

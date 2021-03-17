@@ -9,7 +9,7 @@ var HashMap = require('hashmap');
 var mysql_setting = {
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: 'passpass',
     database: 'contractPj'
 
 }
@@ -18,7 +18,7 @@ var hmmsg = new HashMap();
 var errorMsgList = new HashMap();
 
 //日付け妥当性チェックと稼働開始日より稼働終了日の方が日付が後かのチェック
-exports.check = function ( screenParam) {
+exports.check = function (screenParam) {
 
     console.log("チェックの方にきたよ");
 
@@ -26,7 +26,7 @@ exports.check = function ( screenParam) {
     var checkRowArray = countline.split(",");
 
     var checkcount = screenParam.get("checkcount");
-    
+
 
     var errCnt = 0;
     var check;
@@ -36,8 +36,8 @@ exports.check = function ( screenParam) {
 
         for (var i = 0; i < checkcount; i++) {
 
-            var lineParam = screenParam.get("lineParam"+i);
-            var lineNo = lineParam.get("lineNo"+i);
+            var lineParam = screenParam.get("lineParam" + i);
+            var lineNo = lineParam.get("lineNo" + i);
 
             var endyear = lineParam.get("endYear" + i);
             var endmonth = lineParam.get("endMonth" + i);
@@ -51,7 +51,7 @@ exports.check = function ( screenParam) {
 
             if (date.getFullYear() != y || date.getMonth() != m || date.getDate() != d) {
                 console.log("日付不正と判断");
-                errorMsgList.set("msg"+i,(lineNo+1)+"行目で稼働終了日の日付が不正です");
+                errorMsgList.set("msg" + i, (lineNo + 1) + "行目で稼働終了日の日付が不正です");
                 errCnt++;
                 check = 2;
             } else {
@@ -67,15 +67,15 @@ exports.check = function ( screenParam) {
                     var enddate = endyear + endmonth + endday;
 
                     if (nowdate > enddate) {
-                        errorMsgList.set("msg"+i,lineNo+"行目の稼働終了日が現在日付より前の日付となっています。");
-                        errCnt++; 
+                        errorMsgList.set("msg" + i, lineNo + "行目の稼働終了日が現在日付より前の日付となっています。");
+                        errCnt++;
                     } else {
                         // 正常
                         check = 4;
                     }
 
                 } else {
-                    errorMsgList.set("msg"+i,lineNo+"行目の稼働終了日が稼働開始日より前の日付となっています。");
+                    errorMsgList.set("msg" + i, lineNo + "行目の稼働終了日が稼働開始日より前の日付となっています。");
                     errCnt++;
                     check = 2;
                 }
@@ -121,8 +121,8 @@ exports.check = function ( screenParam) {
         aftercheck = 3;
     }
 
-    hmmsg.set("errorCount",errCnt);
-    hmmsg.set("errorMsg",errorMsgList);
+    hmmsg.set("errorCount", errCnt);
+    hmmsg.set("errorMsg", errorMsgList);
     hmmsg.set("checkResultNo", aftercheck);
 
     return hmmsg;

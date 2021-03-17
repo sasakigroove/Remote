@@ -4,7 +4,7 @@ const mysql2 = require('mysql2/promise');
 var mysql_setting = {
   host: 'localhost',
   user: 'root',
-  password: 'root',
+  password: 'passpass',
   database: 'contractPj'
 }
 let mycon = null;
@@ -61,32 +61,31 @@ router.post('/kensaku', (req, res, next) => {
   var sort17 = req.body.sort17;
   var sort18 = req.body.sort18;
   var sort19 = req.body.sort19;
-  var checklinecount =req.body.checklinecount;
-  var errorcount =req.body.errorcount;
-  var excel_before_year=req.body.excel_before_year;
-  var excel_before_month=req.body.excel_before_month;
-  var excel_after_year=req.body.excel_after_year;
-  var excel_after_month=req.body.excel_after_month;
+  var checklinecount = req.body.checklinecount;
+  var errorcount = req.body.errorcount;
+  var excel_before_year = req.body.excel_before_year;
+  var excel_before_month = req.body.excel_before_month;
+  var excel_after_year = req.body.excel_after_year;
+  var excel_after_month = req.body.excel_after_month;
 
 
-  
-  search_Display(res,keyword, radioCond, genre, sheetsearch, sort_button,
+
+  search_Display(res, keyword, radioCond, genre, sheetsearch, sort_button,
     start_before_year, start_before_month, start_after_year, start_after_month,
     end_before_year, end_before_month, end_after_year, end_after_month,
     sort1, sort2, sort3, sort4, sort5, sort6, sort7, sort8, sort9, sort10, sort11,
-     sort12, sort13, sort14, sort15, sort16, sort17 , sort18 , sort19 
-    ,checklinecount,errorcount,excel_before_year,excel_before_month,excel_after_year,excel_after_month);
+    sort12, sort13, sort14, sort15, sort16, sort17, sort18, sort19
+    , checklinecount, errorcount, excel_before_year, excel_before_month, excel_after_year, excel_after_month);
 
 
 });
 
 //絞り込み検索とソートのためのメソッド------------------------------------------------
-async function search_Display(res,keyword, radioCond, genre, sheetsearch, sort_button,
+async function search_Display(res, keyword, radioCond, genre, sheetsearch, sort_button,
   start_before_year, start_before_month, start_after_year, start_after_month,
   end_before_year, end_before_month, end_after_year, end_after_month,
-  sort1, sort2, sort3, sort4, sort5, sort6, sort7, sort8, sort9, sort10, sort11, sort12, sort13, sort14, sort15, sort16, sort17 , sort18 , sort19 
-  ,checklinecount,errorcount,excel_before_year,excel_before_month,excel_after_year,excel_after_month) 
-  {
+  sort1, sort2, sort3, sort4, sort5, sort6, sort7, sort8, sort9, sort10, sort11, sort12, sort13, sort14, sort15, sort16, sort17, sort18, sort19
+  , checklinecount, errorcount, excel_before_year, excel_before_month, excel_after_year, excel_after_month) {
   var sheet_data_method = new HashMap();
   var recordCheckList = new HashMap();
   console.log(' 絞り込み検索とソートのためのメソッドにきた');
@@ -104,20 +103,20 @@ async function search_Display(res,keyword, radioCond, genre, sheetsearch, sort_b
     keyword, radioCond, genre, sheetsearch, sort_button,
     start_before_year, start_before_month, start_after_year, start_after_month,
     end_before_year, end_before_month, end_after_year, end_after_month,
-    sort1, sort2, sort3, sort4, sort5, sort6, sort7, sort8, sort9, sort10, sort11, 
-    sort12, sort13, sort14, sort15, sort16, sort17 , sort18 , sort19  
-    ,errorcount,excel_before_year,excel_before_month,excel_after_year,excel_after_month,0
+    sort1, sort2, sort3, sort4, sort5, sort6, sort7, sort8, sort9, sort10, sort11,
+    sort12, sort13, sort14, sort15, sort16, sort17, sort18, sort19
+    , errorcount, excel_before_year, excel_before_month, excel_after_year, excel_after_month, 0
   );
   var result = result_method.get('rowsKey');
   var sum_data = result_method.get('sum');
 
-    for(var i=0;i < result.length;i++){
-      recordCheckList.set("record"+i,0); 
-    }
+  for (var i = 0; i < result.length; i++) {
+    recordCheckList.set("record" + i, 0);
+  }
 
   var data = {
-    'ROWS': result, 'sheet_data': sheet_data, 'sum_data': sum_data,updatemsg:'',deletemsg:''
-    , 'pushButton':0
+    'ROWS': result, 'sheet_data': sheet_data, 'sum_data': sum_data, updatemsg: '', deletemsg: ''
+    , 'pushButton': 0
     , 'sort_button': sort_button
     , 'summary_data': result_method.get('summary_hsh')
     , 'summary_judgement': result_method.get('summary_judgement')
@@ -157,19 +156,19 @@ async function search_Display(res,keyword, radioCond, genre, sheetsearch, sort_b
     , 'sort17': result_method.get('sort17')
     , 'sort18': result_method.get('sort18')
     , 'sort19': result_method.get('sort19')
-    , 'excel_before_year' : excel_before_year
-    , 'excel_before_month' : excel_before_month
-    , 'excel_after_year' : excel_after_year
-    , 'excel_after_month' : excel_after_month
-    , 'eigyoubetu_name' : result_method.get('eigyoubetu_name')
-    , 'eigyoubetu_deta' : result_method.get('eigyoubetu_deta')
-    , 'size' : result_method.get('size')
-    , 'now_mm' : result_method.get('now_mm_hsh')
-    , 'eigyoubetu_hantei' : result_method.get('eigyoubetu_hantei')
-    , 'summary_check' : result_method.get('summary_check')
-    , 'eigyoubetu_check' : result_method.get('eigyoubetu_check')
-    , 'recordCheckList' : recordCheckList
-    
+    , 'excel_before_year': excel_before_year
+    , 'excel_before_month': excel_before_month
+    , 'excel_after_year': excel_after_year
+    , 'excel_after_month': excel_after_month
+    , 'eigyoubetu_name': result_method.get('eigyoubetu_name')
+    , 'eigyoubetu_deta': result_method.get('eigyoubetu_deta')
+    , 'size': result_method.get('size')
+    , 'now_mm': result_method.get('now_mm_hsh')
+    , 'eigyoubetu_hantei': result_method.get('eigyoubetu_hantei')
+    , 'summary_check': result_method.get('summary_check')
+    , 'eigyoubetu_check': result_method.get('eigyoubetu_check')
+    , 'recordCheckList': recordCheckList
+
   };
   res.render('Search_List_view', data);
 
@@ -193,7 +192,7 @@ async function Initial_Display(res) {
   //初期表示時の検索結果を出すためのプルダウン
 
   var result_method = await initial_display_search.searchcheck(
-      
+
     null//キーワード
     , 0　　//ラジオボタン
     , 0   //ジャンルで絞り込み
@@ -221,32 +220,32 @@ async function Initial_Display(res) {
     , 0   //ソートボタン１２
     , 0   //ソートボタン１３
     , 0   //ソートボタン１４
-  　, 0    //ソートボタン１５
-  　, 0   //ソートボタン１６
+    , 0    //ソートボタン１５
+    , 0   //ソートボタン１６
     , 0   //ソートボタン１７
-  　, 0    //ソートボタン１８
-  　, 0   //ソートボタン１９
-  　, null//エラーカウント
-  　, 0   //excel取り込み年（前）
-  　, 0   //excel取り込み月（前）
-  　, 0   //excel取り込み年（後）
-  　, 0   //excel取り込み月（後）
-  　, 0   //画面判定用変数（画面「０」Excel出力「１」）
+    , 0    //ソートボタン１８
+    , 0   //ソートボタン１９
+    , null//エラーカウント
+    , 0   //excel取り込み年（前）
+    , 0   //excel取り込み月（前）
+    , 0   //excel取り込み年（後）
+    , 0   //excel取り込み月（後）
+    , 0   //画面判定用変数（画面「０」Excel出力「１」）
   );
 
   var result = result_method.get('rowsKey');
   var sum_data = result_method.get('sum');
 
-  for(var i=0;i < result.length;i++){
-    recordCheckList.set("record"+i,0); 
+  for (var i = 0; i < result.length; i++) {
+    recordCheckList.set("record" + i, 0);
   }
- 
-  
-  
+
+
+
   var data = {
-    updatemsg:'',deletemsg:'',
+    updatemsg: '', deletemsg: '',
     'ROWS': result,
-     'sheet_data': sheet_data
+    'sheet_data': sheet_data
     , 'sum_data': sum_data
     , 'summary_data': result_method.get('summary_hsh')
     , 'madika': result_method.get('madika')
@@ -254,7 +253,7 @@ async function Initial_Display(res) {
     , 'summary_judgement': "1"
     , 'keyword': ""
     , 'errorcount': "0"
-    , 'warningcount':"0"
+    , 'warningcount': "0"
     , 'checklinecount': ""
     , 'start_before_pulldown1': "0"
     , 'start_before_pulldown2': "0"
@@ -287,22 +286,22 @@ async function Initial_Display(res) {
     , 'sort17': "ASC"
     , 'sort18': "ASC"
     , 'sort19': "ASC"
-    , 'excel_before_year' : "0"
-    , 'excel_before_month' : "0"
-    , 'excel_after_year' : "0"
-    , 'excel_after_month' : "0"
-    , 'eigyoubetu_name' : result_method.get('eigyoubetu_name')
-    , 'eigyoubetu_deta' : result_method.get('eigyoubetu_deta')
-    , 'size' : result_method.get('size')
-    , 'now_mm' : result_method.get('now_mm_hsh')
-    , 'eigyoubetu_hantei' : result_method.get('eigyoubetu_hantei')
-    , 'summary_check' : result_method.get('summary_check')
-    , 'eigyoubetu_check' : result_method.get('eigyoubetu_check')
-    , 'pushButton' : 0
-    , 'recordCheckList':recordCheckList
+    , 'excel_before_year': "0"
+    , 'excel_before_month': "0"
+    , 'excel_after_year': "0"
+    , 'excel_after_month': "0"
+    , 'eigyoubetu_name': result_method.get('eigyoubetu_name')
+    , 'eigyoubetu_deta': result_method.get('eigyoubetu_deta')
+    , 'size': result_method.get('size')
+    , 'now_mm': result_method.get('now_mm_hsh')
+    , 'eigyoubetu_hantei': result_method.get('eigyoubetu_hantei')
+    , 'summary_check': result_method.get('summary_check')
+    , 'eigyoubetu_check': result_method.get('eigyoubetu_check')
+    , 'pushButton': 0
+    , 'recordCheckList': recordCheckList
 
   };
- 
+
   res.render('Search_List_view', data);
 
 }

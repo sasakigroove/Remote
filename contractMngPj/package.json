@@ -12,11 +12,14 @@
     "ejs": "~2.6.1",
     "express": "~4.16.1",
     "file-system": "^2.2.2",
+    "hashmap": "^2.4.0",
     "http-errors": "~1.6.3",
     "moment": "^2.29.1",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
     "node-cron": "^2.0.3",
+    "nodemailer": "^6.5.0",
     "xlsx": "^0.16.9",
     "xlsx-populate": "^1.21.0"
   }

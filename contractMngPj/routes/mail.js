@@ -10,7 +10,7 @@ let mycon = null;
 var mysql_setting = {
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: 'passpass',
     database: 'contractPj'
 }
 
@@ -243,7 +243,7 @@ async function sendMailJob() {
         mycon.end();
 
     } catch (e) {
-        
+
         console.log("Caught Exception", e);
         //件名
         subject = '【契約満了通知メール】システムエラー　' + formatted + '分';

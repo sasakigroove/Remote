@@ -1,0 +1,517 @@
+<html xmlns:th=“http://www.thymeleaf.org窶?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="TopPage.css" type="text/css" media="all">
+		<meta charset="UTF-8">
+		<title>契約情報一覧検索</title>
+	</head>
+	<body class = "body">
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+		<script>
+			$(function(){
+				
+				//ジャンル選択されている場合は合計の欄を非表示にする
+				if ($("#total_indicate").val() == "out") {
+					$(".total").toggle();
+				}
+				//平均等表示欄を非表示にする
+				if ($("#average_indicate").val() == "out") {
+					$(".this_month").toggle();
+				}
+				
+				
+				//昇降ボタン押下後、画面出力時の処理
+				if($("#whichSearch").val() == 2){
+					var afterAorD = $("#AorD").val();
+					var item_name = $("#item_id").val();
+					var item_text = $("#" + item_name).text();
+					var change_to_desc = item_text.replace("▲","▼");
+					var change_to_asc = item_text.replace("▼","▲");
+					if (afterAorD == "DESC") {
+						$("#" + item_name).text(change_to_asc);
+						$("#" + item_name).attr("class", "ASC");
+					} else if (afterAorD == "ASC") {
+						$("#" + item_name).text(change_to_desc);
+						$("#" + item_name).prop("class", "DESC");
+						$("#" + item_name).css("background","#ff8c00");
+					}
+				}
+
+				//昇順降順の検索
+				$(".DESC").on("click", function() {
+					var title = $(this).prop("id");
+					var AorD = $(this).prop("class");
+					$("#item_id").prop("value", title);
+					$("#AorD").prop("value", AorD);
+					$("#whichSearch").attr("value","2");
+					$('form').submit();
+					console.log(title);
+				})
+				
+				$(".ASC").on("click", function() {
+					var title = $(this).prop("id");
+					var text = $(this).text();
+					var AorD = $(this).prop("class");
+					$("#item_id").prop("value", title);
+					$("#AorD").prop("value", AorD);
+					$("#whichSearch").attr("value","2");
+					$('form').submit();
+					console.log(title);
+				})
+				
+				
+				//検索結果がない場合は下の二つのテーブルを非表示にする
+				var judge = $("#searchResult").val();
+				if(judge == "out"){
+					$(".Serch_result").remove();
+					var text = "検索結果が見つかりませんでした"
+						modalFunc(text);
+				}
+				//SQLExceptionの場合、ポップアップを表示する
+				if ($("#SQLException").val() != 0) {
+					var text = "SQLExceptionが発生しました"
+						modalFunc(text);
+				}
+				//日付妥当性チェックがoutの場合
+				if($("#specify_date").val() == "out"){
+					var text = "期間を指定する場合は左に過去日、右に未来日を入力してください"
+					modalFunc(text);
+				}
+				//文字数チェックがoutの場合
+				if($("#lengthCheck").val() == "out"){
+					var text = "キーワードは50字以内で入力してください"
+					modalFunc(text);
+				}
+				
+				//選択肢が一つのモーダルが呼び出された時
+				function modalFunc(text){
+					$("p").remove(".popup_text");
+					$(".overlay").fadeIn();
+					$(".modal").prepend('<p class = "popup_text">'+ text +'</p>');
+					$(".modal").fadeIn();
+					
+					$(".Serch_result").remove();
+					$(".this_month").remove();
+				}
+				
+				//検索結果の稼働終了日が1週間、または1か月切っていた場合、レコードの色を変える
+				var size = $("#repeat_times").val();
+				for (var cnt = 0; cnt < size; cnt++) {
+					var judge = $("#end_date" + cnt).val();
+					//削除済みの場合グレーにする
+					if (judge == "gray") {
+						$(".resultEach" + cnt).css("background-color", "gray");
+						$(".chk" + cnt).css("background-color", "white");
+						$("#registration_date").prop("disabled", true);
+						$("#result_chkbox" + cnt).prop("disabled", true);
+					} else {
+						//稼働終了日が一週間以内だった場合、赤にする
+						if (judge == "red") {
+							$(".resultEach" + cnt).css("background-color","red");
+							$(".chk" + cnt).css("background-color", "white");
+							//稼働終了日が一か月以内だった場合、黄色にする
+						} else if (judge == "yellow") {
+							$(".resultEach" + cnt).css("background-color","yellow");
+							$(".chk" + cnt).css("background-color", "white");
+						}
+					}
+				}
+				
+				//検索結果のチェックボックスがチェックされた時
+				$(".result_chkbox").on("change",function() {
+					var times = $(".result_chkbox").index(this);
+					console.log(times);
+					if ($("#result_chkbox" + times).prop("checked")) {
+						$("#table_change" + times).remove();
+						$("#EU" + times).before('<td th:class = "resultList" id = "select_change' + times + '"><select th:name = "updete_year" ><option  th:value = "2022">2022年</option><option  th:value = "2023">2023年</option><option  th:value = "2024">2024年</option><option  th:value = "2025">2025年</option><option  th:value = "2026">2026年</option><option  th:value = "2027">2027年</option><option  th:value = "2028">2028年</option><option  th:value = "2029">2029年</option><option  th:value = "2030">2030年</option><option  th:value = "2031">2031年</option><option  th:value = "2032">2032年</option><option  th:value = "2033">2033年</option><option  th:value = "2034">2034年</option><option  th:value = "2035">2035年</option><option  th:value = "2036">2036年</option><option  th:value = "2037">2037年</option><option  th:value = "2038">2038年</option><option  th:value = "2039">2039年</option><option  th:value = "2040">2040年</option><option  th:value = "2041">2041年</option><option  th:value = "2042">2042年</option><option  th:value = "2043">2043年</option><option  th:value = "2044">2044年</option><option  th:value = "2045">2045年</option><option  th:value = "2046">2046年</option><option  th:value = "2047">2047年</option><option  th:value = "2048">2048年</option><option  th:value = "2049">2049年</option><option  th:value = "2050">2050年</option></select><select th:name = "updete_month"><option th:value = "01">1月</option><option th:value = "02">2月</option><option th:value = "03">3月</option><option th:value = "04">4月</option><option th:value = "05">5月</option><option th:value = "06">6月</option><option th:value = "07">7月</option><option th:value = "08">8月</option><option th:value = "09">9月</option><option th:value = "10">10月</option><option th:value = "11">11月</option><option th:value = "12">12月</option></select><select th:name = "updete_date"><option th:value = "01">1日</option><option th:value = "02">2日</option><option th:value = "03">3日</option><option th:value = "04">4日</option><option th:value = "05">5日</option><option th:value = "06">6日</option><option th:value = "07">7日</option><option th:value = "08">8日</option><option th:value = "09">9日</option><option th:value = "10">10日</option><option th:value = "11">11日</option><option th:value = "12">12日</option><option th:value = "13">13日</option><option th:value = "14">14日</option><option th:value = "15">15日</option><option th:value = "16">16日</option><option th:value = "17">17日</option><option th:value = "18">18日</option><option th:value = "19">19日</option><option th:value = "20">20日</option><option th:value = "21">21日</option><option th:value = "22">22日</option><option th:value = "23">23日</option><option th:value = "24">24日</option><option th:value = "25">25日</option><option th:value = "26">26日</option><option th:value = "27">27日</option><option th:value = "28">28日</option><option th:value = "29">29日</option><option th:value = "30">30日</option><option th:value = "31">31日</option></select></td>');
+					} else {
+						var pass = $("#end_date_pass" + times).val();
+						$("#select_change" + times).remove();
+						$("#EU" + times).before('<td class = "resultList"  id = "table_change' + times + '"> '+ pass + '</td>');
+					}
+				})
+
+				//キーワードで絞り込みのジャンルのテキスト欄を指定なし以外の時入力可能にする
+				$('select[name = "genreselect"]').on("change",function() {
+					var select = $('select[name = "genreselect"]').val();
+					if (select == 0) {
+						$('input:text[name = "keyword"]').prop('disabled', true);
+					} else {
+						$('input:text[name = "keyword"]').prop('disabled', false);
+					}
+				})
+
+				//指定された稼働開始日を選択した場合、プルダウンを入力可能にする
+				$('input:radio[name = "start"]').on("click",function() {
+					var radio = $('input:radio[name = "start"]:checked').val();
+					if (radio == 2) {
+						$('select[name = "start_year_first"]').prop('disabled', false);
+						$('select[name = "start_month_first"]').prop('disabled', false);
+						$('select[name = "start_year_second"]').prop('disabled', false);
+						$('select[name = "start_month_second"]').prop('disabled', false);
+					} else {
+						$('select[name = "start_year_first"]').prop('disabled', true);
+						$('select[name = "start_month_first"]').prop('disabled', true);
+						$('select[name = "start_year_second"]').prop('disabled', true);
+						$('select[name = "start_month_second"]').prop('disabled', true);
+					}
+				})
+
+				//指定された稼働終了日を選択した場合、プルダウンを入力可能にする
+				$('input:radio[name = "finish"]').on("click",function() {
+					var radio = $('input:radio[name = "finish"]:checked')	.val();
+					if (radio == 4) {
+						$('select[name = "finish_year_first"]').prop('disabled', false);
+						$('select[name = "finish_month_first"]').prop('disabled', false);
+						$('select[name = "finish_year_second"]').prop('disabled', false);
+						$('select[name = "finish_month_second"]').prop('disabled', false);
+					} else {
+						$('select[name = "finish_year_first"]').prop('disabled', true);
+						$('select[name = "finish_month_first"]').prop('disabled', true);
+						$('select[name = "finish_year_second"]').prop('disabled', true);
+						$('select[name = "finish_month_second"]').prop('disabled', true);
+					}
+				})
+
+				//更新のポップアップ
+				$(".update").on("click",function() {
+					$("p").remove(".popup_text");
+					$(".overlay").fadeIn();
+					$(".modal").fadeIn();
+					$(".modal").prepend('<p class = "popup_text">本当に更新しますか？</p>');
+					$("#ok").after('<input type = "button" id = "cancel"  value = "キャンセル" class ="popup_button_right">');
+					$(".modal").prepend('<input type = "hidden" class = "hidden"  value = "update">');
+				})
+
+				//削除のポップアップ
+				$(".delete").on("click",function() {
+					$("p").remove(".popup_text");
+					$(".overlay").fadeIn();
+					$("#ok").after('<input type = "button" id = "cancel"  value = "キャンセル" class ="popup_button_right">');
+					$(".modal").prepend('<p class = "popup_text" >本当に削除しますか？</p>');
+					$(".modal").prepend('<input type = "hidden" class = "hidden"  value = "delete">');
+					$(".modal").fadeIn();
+				})
+
+				//ポップアップのOK押下時
+				$("#ok").on("click",function() {
+					if ($("#cancel").val() == undefined) {
+						$(".overlay").fadeOut();
+						$(".modal").fadeOut();
+					} else {
+						$("p").remove(".popup_text");
+						$("#cancel").remove();
+						if ($(".hidden").val() == "update") {
+								$(".modal").prepend('<p class = "popup_text">正常に更新が完了しました</p>');
+						} else if ($(".hidden").val() == "delete") {
+							$(".modal").prepend('<p class = "popup_text">正常に削除が完了しました</p>');
+						}
+					}
+				})
+
+				//ポップアップのキャンセル押下時
+				$(document).on("click", "#cancel", function() {
+					$(".overlay").fadeOut();
+					$(".modal").fadeOut();
+					$("#cancel").remove();
+				})
+
+				//「この条件で絞り込み」を押下時
+				$(".search").on("click",function() {
+					var genre_select = $(".genreselect").val();
+					var sales_select = $('select[name = "sales"]').val();
+					var start_radio = $('input:radio[name = "start"]:checked').val();
+					var finish_radio = $('input:radio[name = "finish"]:checked').val();
+					var total = genre_select + sales_select+ start_radio + finish_radio;
+
+					if (total == 0) {
+						$("p").remove(".popup_text");
+						$(".overlay").fadeIn();
+						$(".modal").prepend('<p class = "popup_text">検索条件を1つ以上入力してください</p>');
+						$(".modal").fadeIn();
+					} else {
+						$("#whichSearch").attr("value","1");
+						$('form').submit();
+					}
+				})
+			})
+			
+		</script>
+
+		<form action = "/SEARCH">
+			<div class = "top_button">
+				<input type = "button" value = "取り込み" class = "input">
+				<input type = "button" value = "出力"  class = "output">
+			</div>
+			
+			<div class = "search_conditions">
+				<div class = "keyword">
+					<h3>●キーワードで絞り込み</h3>
+					<div class = "genre">
+						<h4>ジャンル</h4>
+						<select class = "genreselect" name = "genreselect">
+							<option selected th:value = "0">指定なし</option>
+							<option th:value = "general_contractor">元請</option>
+							<option th:value = "proposition_manager">案件元営業</option>
+							<option th:value = "affiliation_company">所属会社</option>
+							<option th:value = "affiliation_manager">所属会社営業</option>
+							<option th:value = "engineer_name">技術者名</option>
+							<option th:value = "skill">スキル</option>
+							<option th:value = "EU">エンド</option>
+						</select><br>
+			
+						<label class = "genrelabel">から&emsp;&emsp;<input type = "text" name = "keyword"  disabled>で絞り込み</label><br>
+					</div>
+				
+					<div>
+						<h4>営業別</h4>
+						<select name = "sales">
+							<option th:value = "0" selected>指定なし</option>
+							<option th:each = "salesEach,stat : ${salesList}"   th:text = "${salesEach.sheet_name}"></option>
+						</select>
+					</div>
+				</div>
+				
+				<div class = "operating_period">
+					<h3 class = "operating_title">●稼働期間で絞り込み</h3>
+					<div class = "operating_start">
+						<h4>稼働開始日で絞り込み</h4>
+						<label class = "start_unspecified"><input type = "radio" name = "start"  value = "0" checked>指定なし</label><br>
+						<label class = "start_month"><input type = "radio" name = "start"  value = "1">稼働開始当月</label><br>
+						<label class = "start_specify"><input type = "radio" name = "start" value = "2">指定された稼働開始日～指定された稼働開始日</label><br>
+						<div class = "start_input">
+							<select disabled name = "start_year_first" class = "start_select">
+								<option value = "2022">2022年</option><option value = "2021">2021年</option><option  th:value = "2020">2020年</option>
+								<option value = "2019">2019年</option><option value = "2018">2018年</option>
+								<option value = "2017">2017年</option><option value = "2016">2016年</option>
+								<option value = "2015">2015年</option><option value = "2014">2014年</option>
+								<option value = "2013">2013年</option><option value = "2012">2012年</option>
+								<option value = "2011">2011年</option><option value = "2010">2010年</option>
+								<option value = "2009">2009年</option><option value = "2008">2008年</option>
+								<option value = "2007">2007年</option><option value = "2006">2006年</option>
+								<option value = "2005">2005年</option><option value = "2004">2004年</option>
+								<option value = "2003">2003年</option><option value = "2002">2002年</option>
+								<option value = "2001">2001年</option><option value = "2000">2000年</option>
+								<option value = "1999">1999年</option><option value = "1998">1998年</option>
+								<option value = "1997">1997年</option><option value = "1996">1996年</option>
+								<option value = "1995">1995年</option><option value = "1994">1994年</option>
+								<option value = "1993">1993年</option><option value = "1992">1992年</option>
+								<option value = "1991">1991年</option><option value = "1990">1990年</option>
+							</select>
+							<select disabled name = "start_month_first" class = "start_select">
+								<option value = "01">1月</option><option value = "02">2月</option><option value = "03">3月</option>
+								<option value = "04">4月</option><option value = "05">5月</option><option value = "06">6月</option>
+								<option value = "07">7月</option><option value = "08">8月</option><option value = "09">9月</option>
+								<option value = "10">10月</option><option value = "11">11月</option><option value = "12">12月</option>
+							</select>
+							&emsp;&emsp;～&emsp;&emsp;
+							<select disabled name = "start_year_second" class = "start_select">
+								<option value = "2022">2022年</option><option value = "2021">2021年</option><option  th:value = "2020">2020年</option>
+								<option value = "2019">2019年</option><option value = "2018">2018年</option>
+								<option value = "2017">2017年</option><option value = "2016">2016年</option>
+								<option value = "2015">2015年</option><option value = "2014">2014年</option>
+								<option value = "2013">2013年</option><option value = "2012">2012年</option>
+								<option value = "2011">2011年</option><option value = "2010">2010年</option>
+								<option value = "2009">2009年</option><option value = "2008">2008年</option>
+								<option value = "2007">2007年</option><option value = "2006">2006年</option>
+								<option value = "2005">2005年</option><option value = "2004">2004年</option>
+								<option value = "2003">2003年</option><option value = "2002">2002年</option>
+								<option value = "2001">2001年</option><option value = "2000">2000年</option>
+								<option value = "1999">1999年</option><option value = "1998">1998年</option>
+								<option value = "1997">1997年</option><option value = "1996">1996年</option>
+								<option value = "1995">1995年</option><option value = "1994">1994年</option>
+								<option value = "1993">1993年</option><option value = "1992">1992年</option>
+								<option value = "1991">1991年</option><option value = "1990">1990年</option>
+							</select>
+							<select disabled name = "start_month_second" class = "start_select">
+								<option value = "01">1月</option><option value = "02">2月</option><option value = "03">3月</option>
+								<option value = "04">4月</option><option value = "05">5月</option><option value = "06">6月</option>
+								<option value = "07">7月</option><option value = "08">8月</option><option value = "09">9月</option>
+								<option value = "10">10月</option><option value = "11">11月</option><option value = "12">12月</option>
+							</select>
+						</div><br>
+					</div>
+				
+					<div>
+						<h4>稼働終了日で絞り込み</h4><br>
+						<input type = "radio" name = "finish" value = "0" checked>指定なし<br>
+						<input type = "radio" name = "finish" value = "1">稼働終了当月<br>
+						<input type = "radio" name = "finish" value = "2">稼働終了日まで一か月未満<br>
+						<input type = "radio" name = "finish" value = "3">稼働終了日まで一週間未満<br>
+						<input type = "radio" name = "finish" value = "4">指定された稼働終了日～指定された稼働終了日<br>
+						<select disabled name = "finish_year_first" class = "finish_select">
+							<option value = "2022"  class = "finish_select">2022年</option>
+							<option value = "2023">2023年</option><option value = "2024">2024年</option>
+							<option value = "2025">2025年</option><option value = "2026">2026年</option>
+							<option value = "2027">2027年</option><option value = "2028">2028年</option>
+							<option value = "2029">2029年</option><option value = "2030">2030年</option>
+							<option value = "2031">2031年</option><option value = "2032">2032年</option>
+							<option value = "2033">2033年</option><option value = "2034">2034年</option>
+							<option value = "2035">2035年</option><option value = "2036">2036年</option>
+							<option value = "2037">2037年</option><option value = "2038">2038年</option>
+							<option value = "2039">2039年</option><option value = "2040">2040年</option>
+							<option value = "2041">2041年</option><option value = "2042">2042年</option>
+							<option value = "2043">2043年</option><option value = "2044">2044年</option>
+							<option value = "2045">2045年</option><option value = "2046">2046年</option>
+							<option value = "2047">2047年</option><option value = "2048">2048年</option>
+							<option value = "2049">2049年</option><option value = "2050">2050年</option>
+						</select>
+						<select disabled name = "finish_month_first"  class = "finish_select">
+							<option value = "01">1月</option><option value = "02">2月</option><option value = "03">3月</option>
+							<option value = "04">4月</option><option value = "05">5月</option><option value = "06">6月</option>
+							<option value = "07">7月</option><option value = "08">8月</option><option value = "09">9月</option>
+							<option value = "10">10月</option><option value = "11">11月</option><option value = "12">12月</option>
+						</select>
+						&emsp;&emsp;～&emsp;&emsp;
+						<select disabled name = "finish_year_second"  class = "finish_select">
+							<option  value = "2022">2022年</option><option  value = "2023">2023年</option>
+							<option  value = "2024">2024年</option><option  value = "2025">2025年</option>
+							<option  value = "2026">2026年</option><option  value = "2027">2027年</option>
+							<option  value = "2028">2028年</option><option  value = "2029">2029年</option>
+							<option  value = "2030">2030年</option><option  value = "2031">2031年</option>
+							<option  value = "2032">2032年</option><option  value = "2033">2033年</option>
+							<option  value = "2034">2034年</option><option  value = "2035">2035年</option>
+							<option  value = "2036">2036年</option><option  value = "2037">2037年</option>
+							<option  value = "2038">2038年</option><option  value = "2039">2039年</option>
+							<option  value = "2040">2040年</option><option  value = "2041">2041年</option>
+							<option  value = "2042">2042年</option><option  value = "2043">2043年</option>
+							<option  value = "2044">2044年</option><option  value = "2045">2045年</option>
+							<option  value = "2046">2046年</option><option  value = "2047">2047年</option>
+							<option  value = "2048">2048年</option><option  value = "2049">2049年</option>
+							<option  value = "2050">2050年</option>
+						</select>
+						<select disabled name = "finish_month_second"  class = "finish_select">
+							<option value = "01">1月</option><option value = "02">2月</option><option value = "03">3月</option>
+							<option value = "04">4月</option><option value = "05">5月</option><option value = "06">6月</option>
+							<option value = "07">7月</option><option value = "08">8月</option><option value = "09">9月</option>
+							<option value = "10">10月</option><option value = "11">11月</option><option value = "12">12月</option>
+						</select>
+					</div>
+				</div>
+
+				
+			</div>
+			<div class = "bottom">
+				<input type = "button" value = "この条件で絞り込み"  class = "search">
+				<div class = "others">
+					<h4>その他の条件で絞り込み</h4>
+					<input type = "radio" name = "others" value = "0">稼働中のみを表示<br>
+					<input type = "radio" name = "others" value = "1"checked>全ての履歴を表示<br>
+				</div>
+			</div>
+			
+				<table class = "Serch_result">
+					<thead class = "tableScroll">
+					<tr class = "title_color">
+						<td class = "clean"></td>
+						<th id = "year_month_date" name = "item" class = "ASC">▲Excel取り込み年月</th>
+						<th id = "start_date" name = "item" class = "ASC">▲稼働開始日</th>
+						<th id = "end_date" name = "item" class = "ASC">▲稼働終了日</th>
+						<th id = "EU" name = "item" class = "ASC">▲エンド</th>
+						<th id = "general_contractor" name = "item" class = "ASC">▲元請</th>
+						<th id = "proposition_company" name = "item" class = "ASC">▲案件元</th>
+						<th id = "proposition_manager"name = "item"  class = "ASC">▲案件元営業</th>
+						<th id = "affiliation_company" name = "item" class = "ASC">▲所属会社</th>
+						<th id = "affiliation_manager" name = "item" class = "ASC">▲所属会社営業</th>
+						<th id = "engineer_name" name = "item" class = "ASC">▲技術者名</th>
+						<th id = "skill" name = "item" class = "ASC">▲スキル</th>
+						<th id = "earnings" name = "item" class = "ASC">▲売上</th>
+						<th id = "purchase_price" name = "item" class = "ASC">▲仕入</th>
+						<th id = "legal_welfare_expense" name = "item" class = "ASC">▲法定福利</th>
+						<th id = "gross_profit" name = "item" class = "ASC">▲粗利益</th>
+						<th id = "gross_margin" name = "item" class = "ASC">▲粗利率</th>
+					</tr>
+					</thead>
+					<tbody class = "tbody">
+					<tr th:each = "resultEach,stat : ${resultList}" th:class = "|resultEach${stat.index}|">
+						<td th:class = "|chk${stat.index}|" ><input type = "checkbox"  th:class = "result_chkbox" th:id = "|result_chkbox${stat.index}|" th:value = "|chkbox${stat.index}|"></td>
+						<td th:class = "resultList" th:text = "${resultEach.year_month_date}"></td>
+						<td th:class = "resultList" th:text = "${resultEach.start_date}"></td>
+						<td th:class = "resultList"  th:text = "${resultEach.end_date}" th:id = "|table_change${stat.index}|"></td>
+						<td th:class = "resultList" th:text = "${resultEach.EU}" th:id = "|EU${stat.index}|"></td>
+						<td th:class = "resultList" th:text = "${resultEach.general_contractor}"></td>
+						<td th:class = "resultList" th:text = "${resultEach.proposition_company}"></td>
+						<td th:class = "resultList" th:text = "${resultEach.proposition_manager}"></td>
+						<td th:class = "resultList" th:text = "${resultEach.affiliation_company}"></td>
+						<td th:class = "resultList" th:text = "${resultEach.affiliation_manager}"></td>
+						<td th:class = "resultList" th:text = "${resultEach.engineer_name}"></td>
+						<td th:class = "resultList" th:text = "${resultEach.skill}"></td>
+						<td class = "number resultList" th:text = "|&yen${resultEach.earnings}|"></td>
+						<td class = "number resultList" th:text = "|&yen${resultEach.purchase_price}|"></td>
+						<td class = "number resultList" th:text = "|&yen${resultEach.legal_welfare_expense}|"></td>
+						<td class = "number resultList" th:text = "|&yen${resultEach.gross_profit}|"></td>
+						<td class = "number resultList" th:text = "|${resultEach.gross_margin}%|"></td>
+						<td class = "display_td"><input type = "hidden"  th:value = "${resultEach.end_date}" th:id = "|end_date_pass${stat.index}|"></td>
+					</tr>
+					
+					<tr class = "total">
+						<td></td><td></td><td></td><td></td><td></td>
+						<td></td><td></td><td></td><td></td><td></td><td></td>
+						<td class = "total_record" >合計</td>
+						<td class = "total_record number" th:text = "|&yen${earnings}|"></td>
+						<td class = "total_record number" th:text = "|&yen${purchase_price}|"></td>
+						<td class = "total_record number" th:text = "|&yen${legal_welfare_expense}|"></td>
+						<td class = "total_record number" th:text = "|&yen${gross_profit}|"></td>
+						<td class = "total_record number" th:text = "|${gross_margin}%|"></td>
+					</tr>
+					</tbody>
+				</table>
+				<br>
+				
+				<!-- 平均等表示欄 -->
+				<table border = "1" class = "this_month">
+					<tr th:each = "tdItems:${averageList}">
+						<td th:text = "${tdItems.name}"></td>
+						<td  class = "td"  th:text = "${tdItems.item}"></td>
+					</tr>
+					</table>
+			
+			<!-- 更新削除ボタン -->
+			<div class = "update_delete">
+				<input type = "button" class = "update" value = "更新"><br>
+				<input type = "button" class = "delete" value = "削除">
+			</div>
+			
+			<!-- 以下、ポップアップ -->
+			<div class = "overlay"></div>
+			
+			<!-- モーダル -->
+			<div class = "modal" id = "modal">
+				<input type = "button" id = "ok"  value = "OK" class ="popup_button_left">
+			</div>
+			
+		
+<!-- hiddenゾーン -->
+			<!-- jQueryの検索結果の色を変更するためのhidden -->			
+			<div th:each = "endDateEach,endstat : ${EditList}">
+				<input type = "hidden" th:id = "|end_date${endstat.index}|" th:value = "${endDateEach.judge}">
+				<input type = "hidden" th:id = "repeat_times" th:value = "${endstat.size}">
+			</div>
+			<!-- プルダウンの営業をサーバに渡すためのhidden -->
+			<div th:each = "salesEach,stat : ${salesList}" >
+				<input type = "hidden"  th:value = "${salesEach.sheet_name}"   th:name = "'sheet_name[' + ${stat.index}+']'">
+			</div>
+			<!-- 初期表示か絞り込み検索か昇順降順の検索か -->
+			<input type = "hidden" name = "whichSearch" id = "whichSearch"  th:value = "${whichSearch}">
+			<!-- SQLExceptionの判定 -->
+			<input type = "hidden" id = "SQLException" th:value = "${SQLException}">
+			<!-- 昇順降順の変更の際、どのボタンを押したか -->
+			<input type = "hidden" name = "item_name"  id = "item_id"  th:value = "${item_name}">
+			<!-- 昇順にするか降順にするかの判定 -->
+			<input type = "hidden" name = "AorD"  id = "AorD" th:value = "${AscDesc}">
+			<!-- 検索結果がない場合は検索結果テーブルを非表示にする -->
+			<input type = "hidden" id = "searchResult" th:value  = "${search_result}">
+			<!-- ジャンルが選択されていた場合合計を非表示にする -->
+			<input type = "hidden" id = "total_indicate"  th:value = "${total_indicate}">
+			<!-- 平均等表示欄を表示するか -->
+			<input type = "hidden" id = "average_indicate" th:value = "${average_table}">
+			<!-- 日付妥当性チェック -->
+			<input type = "hidden" id = "specify_date" th:value= "${DaysCheck}">
+			<!-- 文字数チェック -->
+			<input type = "hidden" id = "lengthCheck" th:value = "${lengthCheck}">
+
+		</form>
+
+	</body>
+</html>
